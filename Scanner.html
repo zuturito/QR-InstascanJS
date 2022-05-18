@@ -1,0 +1,64 @@
+<html lang="es">
+<head>
+	<meta charset="utf-8">
+	<title>QR Instascan JS example</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="instascan.js"></script>
+</head>
+<body>
+<section>
+    <div class="container">
+		<div class="row">
+			<div>
+                <h1>Simple QR scanner</h1>
+				<div>
+					<video id="qrcam"></video>
+					<label class="btn btn-primary active">
+						<input type="radio" name="options" value="1" autocomplete="off" checked> Front Camera
+					</label>
+					<label class="btn btn-secondary">
+						<input type="radio" name="options" value="2" autocomplete="off"> Back Camera
+					</label>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div>
+	    <input type="text" name="value_item" id="value_item"></input>
+	</div>
+</section>
+<script type="text/javascript">
+    var scanner = new Instascan.Scanner({ video: document.getElementById('qrcam'), scanPeriod: 5, mirror: false });
+    scanner.addListener('scan',function(content){
+        alert(content);
+		document.getElementById("value_item").value = content;
+    });
+    Instascan.Camera.getCameras().then(function (cameras){
+        if(cameras.length>0){
+            scanner.start(cameras[0]);
+            $('[name="options"]').on('change',function(){
+                if($(this).val()==1){
+                    if(cameras[0]!=""){
+                        scanner.start(cameras[0]);
+                    }else{
+                        alert('Camera not found! Accept permissions');
+                    }
+                }else if($(this).val()==2){
+                    if(cameras[1]!=""){
+                        scanner.start(cameras[1]);
+                    }else{
+                        alert('Camera not found! Accept permissions');
+                    }
+                }
+            });
+        }else{
+            console.error('NO Camera');
+            alert('No active camera. Please see permissions');
+        }
+    }).catch(function(e){
+        console.error(e);
+        alert(e);
+    });
+</script>
+</body>
+</html>
